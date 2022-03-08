@@ -8,8 +8,8 @@ import (
 	"github.com/Sirlanri/distiot-master/server/log"
 )
 
-//根据node的id，获取该node的地址，端口信息
-func FindNodeid(id string) (addr string, port string, err error) {
+//根据node的id，在Redis获取该node的地址，端口信息
+func FindNodeidRds(id string) (addr string, port string, err error) {
 	cmd := db.Rdb.LRange(db.RedisCtx, id, 0, 1)
 	value, err := cmd.Result()
 	if err != nil {
