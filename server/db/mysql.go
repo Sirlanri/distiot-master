@@ -2,52 +2,47 @@ package db
 
 import (
 	"github.com/Sirlanri/distiot-master/server/log"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
-	"github.com/jmoiron/sqlx"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var (
-	//全局DB指针
-	db *sqlx.DB
 	//MySQL数据库指针
 	Mdb *gorm.DB
 )
 
 func init() {
-	connectMysql()
+	connectMysqlByGorm()
 	connectRedis()
-}
-
-//初始化MySQL数据库连接
-func connectMysql() {
-	var err error
-	db, err = sqlx.Open("mysql", "root:123456@tcp(localhost:3306)/distiot-master")
-	if err != nil {
-		log.Log.Errorln("server- mysql open数据库失败")
-		return
-	}
-	err = db.Ping()
-	if err != nil {
-		log.Log.Errorln("server- MySQL ping数据库失败")
-		return
-	}
-	log.Log.Infoln("server- MySQL链接完成")
-
 }
 
 func connectMysqlByGorm() {
 	var err error
-	Mdb, err = gorm.Open("mysql", "root:123456@(127.0.0.1:3306)/distiot")
+	dsn := "root:123456@tcp(127.0.0.1:3306)/distiot-master"
+	Mdb, err = gorm.Open(mysql.Open(dsn))
 	if err != nil {
-		log.Log.Errorln("server-db MySQL连接失败")
+		log.Log.Errorln("server-db MySQL连接失败", err.Error())
 		return
 	}
-	err = Mdb.DB().Ping()
+	err = Mdb.Error
 	if err != nil {
-		log.Log.Errorln("server-db MySQL ping失败")
+		log.Log.Errorln("server-db MySQL ping失败", err.Error())
 		return
 	}
 	log.Log.Infoln("server-db MySQL连接成功")
 
+}
+
+//MySQL内的数据模型
+//Node节点表
+type Node struct {
+	Id   int    `gorm:"primary_key"`
+	Addr string `grom:"type:varchar(511)"`
+	Port int    `grom:"type:int(0)"`
+}
+
+//设备表
+type Device struct {
+	Deviceid int `gorm:"primary_key"`
+	Nodeid   int `gorm:"int(0)"`
 }
