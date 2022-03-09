@@ -36,7 +36,7 @@ func Createid() string {
 //初始化
 func init() {
 
-	opts := mqtt.NewClientOptions().AddBroker("tcp://mqtt.ri-co.cn:1883").SetClientID("distiot_master_" + Createid())
+	opts := mqtt.NewClientOptions().AddBroker("tcp://localhost:1883").SetClientID("distiot_master_" + Createid())
 
 	opts.SetKeepAlive(60 * time.Second)
 	// 设置消息回调处理函数
@@ -45,15 +45,15 @@ func init() {
 
 	MqClient = mqtt.NewClient(opts)
 	if token := MqClient.Connect(); token.Wait() && token.Error() != nil {
-		panic(token.Error())
+		log.Log.Errorln("server-mqtt 连接服务器失败", token.Error())
 	}
-	sub()
+	//sub()
 
 }
 
 //sub 订阅某个主题的消息
 func sub() {
-	topic := "iot1/server/res"
+	topic := "distiot/online/newnode/"
 	token := MqClient.Subscribe(topic, 2, msgHandler)
 	token.Wait()
 }
