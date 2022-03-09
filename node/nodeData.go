@@ -42,17 +42,18 @@ func InsertNodeRedis(node *db.Node) error {
 	return nil
 }
 
-//将node的单个数据写入MySQL
-func InsertNodeMysql(addr string, port int) error {
-	res := db.Mdb.Create(&db.Node{
+//将node的单个数据写入MySQL，返回此node的id
+func InsertNodeMysql(addr string, port int) (int, error) {
+	node := &db.Node{
 		Id:   0,
 		Addr: addr,
 		Port: port,
-	})
+	}
+	res := db.Mdb.Create(node)
 	if res.Error != nil {
 		log.Log.Warnln("node- InsertNodeMysql 插入数据失败 ", res.Error)
-		return res.Error
+		return 0, res.Error
 	}
 	log.Log.Debugln("写入成功", res.RowsAffected)
-	return nil
+	return node.Id, nil
 }
