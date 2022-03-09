@@ -13,14 +13,18 @@ var Log = &logrus.Logger{}
 func init() {
 	//控制log级别
 	level := logrus.DebugLevel
+	//记录函数
+	Log.SetReportCaller(true)
 	Log = &logrus.Logger{
 		Out:   os.Stderr,
 		Level: level,
 		Formatter: &prefixed.TextFormatter{
-			DisableColors:   true,
+			DisableColors:   false,
 			TimestampFormat: "2006-01-02 15:04:05",
 			FullTimestamp:   true,
 			ForceFormatting: true,
+			ForceColors:     true,
 		},
 	}
+
 }
