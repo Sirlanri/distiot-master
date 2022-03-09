@@ -10,6 +10,7 @@ import (
 
 //根据node的id，在Redis获取该node的地址、端口信息
 func FindNodeRds(id string) (addr string, port string, err error) {
+	id = "nodeinfo" + id
 	cmd := db.Rdb.LRange(db.RedisCtx, id, 0, 1)
 	value, err := cmd.Result()
 	if err != nil || len(value) == 0 {
@@ -33,7 +34,8 @@ func FindNodeMysql(id string) (node db.Node, err error) {
 
 //将nodes的单个数据写入redis
 func InsertNodeRedis(node *db.Node) error {
-	_, err := db.Rdb.RPush(db.RedisCtx, strconv.Itoa(node.Id),
+	key := "nodeinfo" + strconv.Itoa(node.Id)
+	_, err := db.Rdb.RPush(db.RedisCtx, key,
 		node.Addr, node.Port).Result()
 	if err != nil {
 		log.Log.Warnln("node- InsertNodeRedis node节点信息写入Redis失败 ", err.Error())
