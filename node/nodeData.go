@@ -42,7 +42,7 @@ func InsertNodeRedis(node *db.Node) error {
 	return nil
 }
 
-//将node的单个数据写入MySQL，返回此node的id
+//将node的单个数据写入MySQL，返回此node的id （未来优化性能入手点之一）
 func InsertNodeMysql(addr string, port int) (int, error) {
 	node := &db.Node{
 		Id:   0,
