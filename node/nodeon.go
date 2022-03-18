@@ -8,8 +8,8 @@ import (
 	"github.com/Sirlanri/distiot-master/server/log"
 )
 
-//根据node的id，依次在redis和mysql中查找，若只在MySQL存在，则存入Redis
-func FindNodeByid(id string) (addr, port string, err error) {
+//根据node的id，在redis和mysql中查找，若只在MySQL存在，则存入Redis （此方法不合逻辑，暂时废弃）
+func findNodeByid(id int) (addr, port string, err error) {
 	addr, port, err = FindNodeRds(id)
 	if err != nil {
 		node, err := FindNodeMysql(id)
@@ -20,12 +20,12 @@ func FindNodeByid(id string) (addr, port string, err error) {
 			InsertNodeRedis(&node)
 			return addr, port, nil
 		}
-		err = errors.New("node- FindNodeByid redis与mysql中均无数据 " + id)
+		err = errors.New("node- FindNodeByid redis与mysql中均无数据 " + strconv.Itoa(id))
 	}
 	return
 }
 
-//为新node分配id
+//为新node分配id，将id发送至node节点
 func DistributeID(id int, addr string, port int) {
 	log.Log.Infoln("分配ID ", id, addr, port)
 }
