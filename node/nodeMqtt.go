@@ -38,7 +38,11 @@ func OldNodeonHandler(client mq.Client, msg mq.Message) {
 		UpdateNodeMysql(data)
 	}
 	//更新Redis上线
-	UpdateNodeRedis(data)
+	err = UpdateNodeRedis(data)
+
+	if err == nil {
+		NodeOnConfirm(data.Id)
+	}
 
 }
 

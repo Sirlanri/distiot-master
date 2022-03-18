@@ -29,3 +29,8 @@ func findNodeByid(id int) (addr, port string, err error) {
 func DistributeID(id int, addr string, port int) {
 	log.Log.Infoln("分配ID ", id, addr, port)
 }
+
+//确认节点上线 发送至node
+func NodeOnConfirm(id int) {
+	log.Log.Debugln("node上线确认：", strconv.Itoa(id))
+}
