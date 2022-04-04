@@ -11,14 +11,18 @@ import (
 //根据node的id，在Redis获取该node的地址、端口信息
 func FindNodeRds(id int) (addr string, port string, err error) {
 	ids := "nodeinfo" + strconv.Itoa(id)
-	cmd := db.Rdb.LRange(db.RedisCtx, ids, 0, 1)
+	cmd := db.Rdb.HMGet(db.RedisCtx, ids, addr, port)
 	value, err := cmd.Result()
-	if err != nil || len(value) == 0 {
+	if err != nil || value[0] == nil {
 		//log.Log.Warnln("node- FindNodeRds 无法获取该node信息:", id)
 		err = errors.New("node- FindNodeRds 无法获取该node信息: " + ids)
 		return "", "0", err
 	}
-	return value[0], value[1], nil
+	var arr [2]string
+	for index, v := range value {
+		arr[index] = v.(string)
+	}
+	return arr[0], arr[1], nil
 }
 
 //根据node的id，在MySQL中获取该node的地址、端口信息
@@ -35,8 +39,8 @@ func FindNodeMysql(id int) (node db.Node, err error) {
 //将nodes的单个数据写入redis
 func InsertNodeRedis(node *db.Node) error {
 	key := "nodeinfo" + strconv.Itoa(node.Id)
-	_, err := db.Rdb.RPush(db.RedisCtx, key,
-		node.Addr, node.Port).Result()
+	_, err := db.Rdb.HMSet(db.RedisCtx, key, "addr", node.Addr,
+		"port", node.Port).Result()
 	if err != nil {
 		log.Log.Warnln("node- InsertNodeRedis node节点信息写入Redis失败 ", err.Error())
 		return errors.New("node- InsertNodeRedis node节点信息写入Redis失败 ")
@@ -54,16 +58,10 @@ func UpdateNodeRedis(node *db.Node) error {
 	}
 	//node已存在，更新Redis信息
 	key := "nodeinfo" + strconv.Itoa(node.Id)
-	_, err = db.Rdb.LSet(db.RedisCtx, key,
-		0, node.Addr).Result()
+	_, err = db.Rdb.HMSet(db.RedisCtx, key, "addr", node.Addr,
+		"port", node.Port).Result()
 	if err != nil {
-		log.Log.Warnln("node- DelNodeRedis addr信息更新Redis失败 ", err.Error())
-		return err
-	}
-	_, err = db.Rdb.LSet(db.RedisCtx, key,
-		1, node.Port).Result()
-	if err != nil {
-		log.Log.Warnln("node- DelNodeRedis port信息更新Redis失败 ", err.Error())
+		log.Log.Warnln("node- UpdateNodeRedis 更新Redis失败 ", err.Error())
 		return err
 	}
 	return nil
