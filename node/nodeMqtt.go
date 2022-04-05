@@ -11,6 +11,10 @@ import (
 	mq "github.com/eclipse/paho.mqtt.golang"
 )
 
+func init() {
+	ListenNode()
+}
+
 //绑定目mqtt监听
 func ListenNode() {
 	//已知节点上线
