@@ -38,7 +38,7 @@ func FindNodeMysql(id int) (node db.Node, err error) {
 
 //将nodes的单个数据写入redis
 func InsertNodeRedis(node *db.Node) error {
-	key := "nodeinfo" + strconv.Itoa(node.Id)
+	key := "nodeinfo" + strconv.Itoa(node.ID)
 	_, err := db.Rdb.HMSet(db.RedisCtx, key, "addr", node.Addr,
 		"port", node.Port).Result()
 	if err != nil {
@@ -50,14 +50,14 @@ func InsertNodeRedis(node *db.Node) error {
 
 //更新Redis中的单个nodeinfo数据，有则更新，无则添加
 func UpdateNodeRedis(node *db.Node) error {
-	_, _, err := FindNodeRds(node.Id)
+	_, _, err := FindNodeRds(node.ID)
 	if err != nil {
 		//找不到 不存在 插入节点
 		InsertNodeRedis(node)
 		return nil
 	}
 	//node已存在，更新Redis信息
-	key := "nodeinfo" + strconv.Itoa(node.Id)
+	key := "nodeinfo" + strconv.Itoa(node.ID)
 	_, err = db.Rdb.HMSet(db.RedisCtx, key, "addr", node.Addr,
 		"port", node.Port).Result()
 	if err != nil {
@@ -71,7 +71,7 @@ func UpdateNodeRedis(node *db.Node) error {
 //将node的单个数据写入MySQL，返回此node的id （未来优化性能入手点之一）
 func InsertNodeMysql(addr string, port int) (int, error) {
 	node := &db.Node{
-		Id:   0,
+		ID:   0,
 		Addr: addr,
 		Port: port,
 	}
@@ -81,7 +81,7 @@ func InsertNodeMysql(addr string, port int) (int, error) {
 		return 0, res.Error
 	}
 	log.Log.Debugln("写入成功", res.RowsAffected)
-	return node.Id, nil
+	return node.ID, nil
 }
 
 //更新已有node的信息至MySQL

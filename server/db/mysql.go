@@ -1,6 +1,8 @@
 package db
 
 import (
+	"time"
+
 	"github.com/Sirlanri/distiot-master/server/log"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -36,13 +38,14 @@ func connectMysqlByGorm() {
 //MySQL内的数据模型
 //Node节点表
 type Node struct {
-	Id   int    `gorm:"primary_key"`
+	ID   int    `gorm:"primary_key"`
 	Addr string `grom:"type:varchar(511)"`
 	Port int    `grom:"type:int(0)"`
 }
 
 //设备表
 type Device struct {
-	Deviceid int `gorm:"primary_key"`
-	Nodeid   int `gorm:"int(0)"`
+	ID     int       `gorm:"primary_key"`
+	Nodeid int       `gorm:"int(0)"`
+	Itime  time.Time `gorm:"autoCreateTime:milli"`
 }

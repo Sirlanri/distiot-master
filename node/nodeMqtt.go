@@ -29,7 +29,7 @@ func OldNodeonHandler(client mq.Client, msg mq.Message) {
 	if err != nil {
 		return
 	}
-	node, err := FindNodeMysql(data.Id)
+	node, err := FindNodeMysql(data.ID)
 	if err != nil {
 		return
 	}
@@ -41,7 +41,7 @@ func OldNodeonHandler(client mq.Client, msg mq.Message) {
 	err = UpdateNodeRedis(data)
 
 	if err == nil {
-		NodeOnConfirm(data.Id)
+		NodeOnConfirm(data.ID)
 	}
 
 }
