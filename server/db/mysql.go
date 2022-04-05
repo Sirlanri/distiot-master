@@ -20,7 +20,7 @@ func init() {
 
 func connectMysqlByGorm() {
 	var err error
-	dsn := "root:123456@tcp(127.0.0.1:3306)/distiot-master"
+	dsn := "root:123456@tcp(127.0.0.1:3306)/distiot-master?parseTime=true"
 	Mdb, err = gorm.Open(mysql.Open(dsn))
 	if err != nil {
 		log.Log.Errorln("server-db MySQL连接失败", err.Error())
@@ -45,7 +45,7 @@ type Node struct {
 
 //设备表
 type Device struct {
-	ID     int       `gorm:"primary_key"`
+	ID     int       `gorm:"int(0)"`
 	Nodeid int       `gorm:"int(0)"`
 	Itime  time.Time `gorm:"autoCreateTime:milli"`
 }
