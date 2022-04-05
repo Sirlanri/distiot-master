@@ -14,10 +14,9 @@ func main() {
 	var wg2 sync.WaitGroup
 	wg2.Add(1)
 	start := time.Now()
-	for i := 0; i < 200; i++ {
-		device.FindNodeIDMysql(2)
-		//log.Log.Debugln(nodes)
-	}
+	node := device.FindNodeNow(2)
+	log.Log.Debugln(node)
+
 	elapsed := time.Since(start)
 	log.Log.Debugln("执行时间 ", elapsed)
 
