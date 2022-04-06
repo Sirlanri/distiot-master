@@ -20,7 +20,7 @@ func FindNodeIDMysql(dID int) (nodes []NodeWithTime) {
 	err := tx.Find(&devices, dID).Error
 	if err != nil {
 		log.Log.Warnln("device -FindNodeIDMysql Find dID失败", err.Error())
-		tx.Rollback()
+		//tx.Rollback()
 		return nil
 	}
 	for _, d := range devices {
@@ -29,7 +29,7 @@ func FindNodeIDMysql(dID int) (nodes []NodeWithTime) {
 		err = tx.First(&node, d.Nodeid).Error
 		if err != nil {
 			log.Log.Warnln("device -FindNodeIDMysql Find node信息失败", err.Error())
-			tx.Rollback()
+			//tx.Rollback()
 			return nil
 		}
 		nodewithtime.Addr = node.Addr
