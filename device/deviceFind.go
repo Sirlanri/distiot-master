@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-/* 在MySQL中 通过的ID寻找对应的node信息及开始保存在此node的时间戳，
+/* 在MySQL中 通过dID寻找对应的node信息及开始保存在此node的时间戳
 nodes信息为之前绑定的节点，返回整个列表*/
 func FindNodeIDMysql(dID int) (nodes []NodeWithTime) {
 	var devices []db.Device
