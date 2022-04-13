@@ -45,7 +45,7 @@ func OldNodeonHandler(client mq.Client, msg mq.Message) {
 	err = UpdateNodeRedis(data)
 
 	if err == nil {
-		NodeOnConfirm(data.ID)
+		NodeOnConfirm(data)
 	}
 
 }

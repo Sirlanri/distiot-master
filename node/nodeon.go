@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/Sirlanri/distiot-master/server/db"
 	"github.com/Sirlanri/distiot-master/server/log"
 )
 
@@ -47,6 +48,13 @@ func DistributeID(id int, addr string, port int) {
 }
 
 //确认节点上线 发送至node
-func NodeOnConfirm(id int) {
-	log.Log.Debugln("node上线确认：", strconv.Itoa(id))
+func NodeOnConfirm(node *db.Node) {
+	log.Log.Debugln("node上线确认：", strconv.Itoa(node.ID))
+	Url, _ := url.Parse(node.Addr + ":" + strconv.Itoa(node.Port) + "/node/onlineconfirm")
+	res, err := http.Get(Url.String())
+	if err != nil {
+		log.Log.Warnln("node- NodeOnConfirm 确认节点上线失败 ", err.Error())
+		return
+	}
+	log.Log.Infoln("node- NodeOnConfirm 返回结果：", res.StatusCode)
 }
