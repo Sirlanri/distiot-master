@@ -3,6 +3,7 @@ package node
 import (
 	"errors"
 	"strconv"
+	"time"
 
 	"github.com/Sirlanri/distiot-master/server/db"
 	"github.com/Sirlanri/distiot-master/server/log"
@@ -45,27 +46,28 @@ func InsertNodeRedis(node *db.Node) error {
 		log.Log.Warnln("node- InsertNodeRedis node节点信息写入Redis失败 ", err.Error())
 		return errors.New("node- InsertNodeRedis node节点信息写入Redis失败 ")
 	}
+	err = db.Rdb.Expire(db.RedisCtx, key, time.Second*2).Err()
+	if err != nil {
+		log.Log.Warnln("node- InsertNodeRedis node节点信息写入Redis设置过期时间失败 ", err.Error())
+		return errors.New("node- InsertNodeRedis node节点信息写入Redis设置过期时间失败 ")
+	}
 	return nil
 }
 
-//更新Redis中的单个nodeinfo数据，有则更新，无则添加
-func UpdateNodeRedis(node *db.Node) error {
-	_, _, err := FindNodeRds(node.ID)
+func InsertHeartBeatRedis(hbData *HeartBeat) error {
+	key := "nodeinfo" + strconv.Itoa(hbData.ID)
+	_, err := db.Rdb.HMSet(db.RedisCtx, key, "cpu", hbData.CPU,
+		"mem", hbData.Mem, "disk", hbData.Disk).Result()
 	if err != nil {
-		//找不到 不存在 插入节点
-		InsertNodeRedis(node)
-		return nil
+		log.Log.Warnln("node- InsertHeartBeatRedis node心跳信息写入Redis失败 ", err.Error())
+		return errors.New("node- InsertHeartBeatRedis node心跳信息写入Redis失败 ")
 	}
-	//node已存在，更新Redis信息
-	key := "nodeinfo" + strconv.Itoa(node.ID)
-	_, err = db.Rdb.HMSet(db.RedisCtx, key, "addr", node.Addr,
-		"port", node.Port, "id", node.ID).Result()
+	err = db.Rdb.Expire(db.RedisCtx, key, time.Second*2).Err()
 	if err != nil {
-		log.Log.Warnln("node- UpdateNodeRedis 更新Redis失败 ", err.Error())
-		return err
+		log.Log.Warnln("node- InsertHeartBeatRedis node心跳信息写入Redis设置过期时间失败 ", err.Error())
+		return errors.New("node- InsertHeartBeatRedis node心跳信息写入Redis设置过期时间失败 ")
 	}
 	return nil
-
 }
 
 //将node的单个数据写入MySQL，返回此node的id （未来优化性能入手点之一）

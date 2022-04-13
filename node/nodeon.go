@@ -3,6 +3,7 @@ package node
 
 import (
 	"errors"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -57,4 +58,29 @@ func NodeOnConfirm(node *db.Node) {
 		return
 	}
 	log.Log.Infoln("node- NodeOnConfirm 返回结果：", res.StatusCode)
+}
+
+//主动检测node是否还活着。如果err不为nil，则检测失败
+func NodeOnCheck(node *db.Node) (bool, error) {
+	log.Log.Debugln("正在确定节点存活 ", strconv.Itoa(node.ID))
+	Url, _ := url.Parse(node.Addr + ":" + strconv.Itoa(node.Port) + "/node/ruok")
+	res, err := http.Get(Url.String())
+	if err != nil {
+		log.Log.Warnln("node- NodeOnCheck 确认节点存活失败 ", err.Error())
+		return false, err
+	}
+	defer res.Body.Close()
+	s, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Log.Warnln("node- NodeOnCheck IO读取失败 ", err.Error())
+		return false, err
+	}
+	log.Log.Infoln("node- NodeOnConfirm 返回结果：", res.StatusCode)
+	if string(s) == "ok" {
+		log.Log.Infoln("node- NodeOnCheck 节点存活 ", strconv.Itoa(node.ID))
+		return true, nil
+	} else {
+		log.Log.Infoln("node- NodeOnCheck 节点不存活 ", strconv.Itoa(node.ID))
+		return false, nil
+	}
 }

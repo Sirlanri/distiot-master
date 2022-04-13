@@ -21,8 +21,21 @@ func ListenNode() {
 	token1 := mqtt.MqClient.Subscribe(mqtt.Topic+"online/oldnode", 2, OldNodeonHandler)
 	//新节点上线
 	token2 := mqtt.MqClient.Subscribe(mqtt.Topic+"online/newnode", 2, NewNodeonHandler)
+	//接收node节点的心跳数据
+	token3 := mqtt.MqClient.Subscribe(mqtt.Topic+"heartbeat/node", 2, HeartbeatHandler)
 	token1.Wait()
 	token2.Wait()
+	token3.Wait()
+}
+
+func HeartbeatHandler(client mq.Client, msg mq.Message) {
+	payload := msg.Payload()
+	data := FormatPayloadHeartbeat(&payload)
+	if data == nil {
+		return
+	}
+	//更新Redis
+	InsertHeartBeatRedis(data)
 
 }
 
@@ -42,7 +55,7 @@ func OldNodeonHandler(client mq.Client, msg mq.Message) {
 		UpdateNodeMysql(data)
 	}
 	//更新Redis上线
-	err = UpdateNodeRedis(data)
+	err = InsertNodeRedis(data)
 
 	if err == nil {
 		NodeOnConfirm(data)
@@ -87,6 +100,16 @@ func FormatPayloadOldNode(payload *[]byte) (*db.Node, error) {
 	return &nodeStruct, nil
 }
 
+func FormatPayloadHeartbeat(payload *[]byte) (hbData *HeartBeat) {
+	hbData = new(HeartBeat)
+	err := json.Unmarshal(*payload, hbData)
+	if err != nil {
+		log.Log.Warnln("node- FormatPayloadHeartbeat失败", err.Error())
+		return nil
+	}
+	return hbData
+}
+
 //新节点上线的mqtt数据结构
 type NewNodeOn struct {
 	Addr string `json:"addr"`
@@ -98,4 +121,11 @@ type OldNodeOn struct {
 	ID   int    `json:"id"`
 	Addr string `json:"addr"`
 	Port int    `json:"port"`
+}
+
+type HeartBeat struct {
+	ID   int `json:"id"`
+	CPU  int `json:"cpu"`
+	Mem  int `json:"mem"`
+	Disk int `json:"disk"`
 }
