@@ -40,7 +40,7 @@ func FindNodeMysql(id int) (node db.Node, err error) {
 func InsertNodeRedis(node *db.Node) error {
 	key := "nodeinfo" + strconv.Itoa(node.ID)
 	_, err := db.Rdb.HMSet(db.RedisCtx, key, "addr", node.Addr,
-		"port", node.Port).Result()
+		"port", node.Port, "id", node.ID).Result()
 	if err != nil {
 		log.Log.Warnln("node- InsertNodeRedis node节点信息写入Redis失败 ", err.Error())
 		return errors.New("node- InsertNodeRedis node节点信息写入Redis失败 ")
@@ -59,7 +59,7 @@ func UpdateNodeRedis(node *db.Node) error {
 	//node已存在，更新Redis信息
 	key := "nodeinfo" + strconv.Itoa(node.ID)
 	_, err = db.Rdb.HMSet(db.RedisCtx, key, "addr", node.Addr,
-		"port", node.Port).Result()
+		"port", node.Port, "id", node.ID).Result()
 	if err != nil {
 		log.Log.Warnln("node- UpdateNodeRedis 更新Redis失败 ", err.Error())
 		return err
