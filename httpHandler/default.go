@@ -10,14 +10,14 @@ func IrisInit() {
 	app := iris.New()
 	app.Logger().SetLevel("debug")
 	crs := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 	})
 	app.Use(crs)
 	app.OnErrorCode(iris.StatusNotFound, NotFound)
 	master := app.Party("/master").AllowMethods(iris.MethodOptions, iris.MethodGet, iris.MethodPost)
 	{
-
+		master.Get("/getNode", GetNodeHandler)
 	}
 	var portStr = config.Config.HttpPort
 	app.Run(iris.Addr(":" + portStr))
