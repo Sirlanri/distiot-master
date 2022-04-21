@@ -33,7 +33,7 @@ func findNodeByid(id int) (addr, port string, err error) {
 func DistributeID(id int, addr string, port int) {
 	log.Log.Infoln("分配ID ", id, addr, port)
 	params := url.Values{}
-	Url, err := url.Parse(addr + ":" + strconv.Itoa(port) + "/node/allocateid")
+	Url, err := url.Parse("http://" + addr + ":" + strconv.Itoa(port) + "/node/allocateid")
 	if err != nil {
 		log.Log.Warnln("node- DistributeID url解析失败 ", err.Error())
 		return
@@ -51,7 +51,7 @@ func DistributeID(id int, addr string, port int) {
 //确认节点上线 发送至node
 func NodeOnConfirm(node *db.Node) {
 	log.Log.Debugln("node上线确认：", strconv.Itoa(node.ID))
-	Url, _ := url.Parse(node.Addr + ":" + strconv.Itoa(node.Port) + "/node/onlineconfirm")
+	Url, _ := url.Parse("http://" + node.Addr + ":" + strconv.Itoa(node.Port) + "/node/onlineconfirm")
 	res, err := http.Get(Url.String())
 	if err != nil {
 		log.Log.Warnln("node- NodeOnConfirm 确认节点上线失败 ", err.Error())
