@@ -119,8 +119,9 @@ func Balance() (int, error) {
 	}
 	seed := time.Now().UnixNano()
 	rand.Seed(seed)
-	num := rand.Intn(len(nodes)-1) + 1
-	return num, nil
+	num := rand.Intn(len(nodes))
+	nodeID := nodes[num][8:]
+	return strconv.Atoi(nodeID)
 }
 
 //将dID与nodeID的映射写入mysql
