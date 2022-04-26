@@ -12,7 +12,12 @@ func init() {
 }
 
 type Conf struct {
-	HttpPort string `yaml:"httpport"`
+	HttpPort  string `yaml:"httpport"`
+	RedisAddr string `yaml:"redisAddr"`
+	RedisName string `yaml:"redisName"`
+	RedisPW   string `yaml:"redisPW"`
+	RedisDB   int    `yaml:"redisDB"`
+	MysqlUrl  string `yaml:"mysqlUrl"`
 }
 
 //全局配置文件
