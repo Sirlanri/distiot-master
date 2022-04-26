@@ -27,7 +27,7 @@ func ReadYaml() {
 	path, _ := filepath.Abs(file)
 	index := strings.LastIndex(path, string(os.PathSeparator))
 	path = path[:index+1]
-	fullPath := path + "conf.yaml"
+	fullPath := path + "masterconf.yaml"
 	buf, err := ioutil.ReadFile(fullPath)
 	if err != nil {
 		log.Log.Warnln("server-config ReadYaml 读取配置文件失败", err.Error())

@@ -15,3 +15,4 @@
 # vendor/
 .vscode/launch.json
 .VSCodeCounter
+masterconf.yaml
