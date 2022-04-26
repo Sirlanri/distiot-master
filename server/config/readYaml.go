@@ -2,10 +2,6 @@ package config
 
 import (
 	"io/ioutil"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
 
 	"github.com/Sirlanri/distiot-master/server/log"
 	"gopkg.in/yaml.v3"
@@ -23,12 +19,7 @@ type Conf struct {
 var Config Conf
 
 func ReadYaml() {
-	file, _ := exec.LookPath(os.Args[0])
-	path, _ := filepath.Abs(file)
-	index := strings.LastIndex(path, string(os.PathSeparator))
-	path = path[:index+1]
-	fullPath := path + "masterconf.yaml"
-	buf, err := ioutil.ReadFile(fullPath)
+	buf, err := ioutil.ReadFile("masterconf.yaml")
 	if err != nil {
 		log.Log.Warnln("server-config ReadYaml 读取配置文件失败", err.Error())
 		return
