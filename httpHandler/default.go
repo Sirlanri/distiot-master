@@ -8,7 +8,7 @@ import (
 
 func IrisInit() {
 	app := iris.New()
-	app.Logger().SetLevel("debug")
+	app.Logger().SetLevel("info")
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
