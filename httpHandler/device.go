@@ -28,3 +28,19 @@ func GetNodeHandler(con iris.Context) {
 		return
 	}
 }
+
+func GetNodeHistoryHandler(con iris.Context) {
+	id, err := con.URLParamInt("id")
+	if err != nil {
+		log.Log.Warnln("GetNodeHistoryHandler 获取节点id失败", err.Error())
+		con.StatusCode(401)
+		con.WriteString("传入格式错误，没有id")
+		return
+	}
+	nodes := device.FindNodeIDMysql(id)
+	_, err = con.JSON(nodes)
+	if err != nil {
+		log.Log.Warnln("GetNodeHistoryHandler 打包json失败", err.Error())
+		return
+	}
+}

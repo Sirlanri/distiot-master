@@ -18,6 +18,7 @@ func IrisInit() {
 	master := app.Party("/master").AllowMethods(iris.MethodOptions, iris.MethodGet, iris.MethodPost)
 	{
 		master.Get("/getNode", GetNodeHandler)
+		master.Get("/getNodeHistory", GetNodeHistoryHandler)
 	}
 	var portStr = config.Config.HttpPort
 	app.Run(iris.Addr(":" + portStr))
