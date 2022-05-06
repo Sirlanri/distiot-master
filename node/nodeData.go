@@ -46,7 +46,7 @@ func InsertNodeRedis(node *db.Node) error {
 		log.Log.Warnln("node- InsertNodeRedis node节点信息写入Redis失败 ", err.Error())
 		return errors.New("node- InsertNodeRedis node节点信息写入Redis失败 ")
 	}
-	err = db.Rdb.Expire(db.RedisCtx, key, time.Second*2).Err()
+	err = db.Rdb.Expire(db.RedisCtx, key, time.Second*4).Err()
 	if err != nil {
 		log.Log.Warnln("node- InsertNodeRedis node节点信息写入Redis设置过期时间失败 ", err.Error())
 		return errors.New("node- InsertNodeRedis node节点信息写入Redis设置过期时间失败 ")
